@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:confetti/confetti.dart';
 
 void main() {
   runApp(const MyApp());
@@ -42,6 +43,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyGameState extends State<MyHomePage> {
+  late ConfettiController _confettiController;
   List<int> colors_game = [];
   List<int> colors_user = [];
   int maxPlayCount = 4;
@@ -53,6 +55,18 @@ class _MyGameState extends State<MyHomePage> {
   final TextStyle _textStyleDefault = const TextStyle(
     color: Colors.white,
   );
+
+  @override
+  void initState() {
+    super.initState();
+    _confettiController = ConfettiController(duration: const Duration(seconds: 1));
+  }
+
+  @override
+  void dispose() {
+    _confettiController.dispose();
+    super.dispose();
+  }
 
   Future<void> _startGame() async {
       colors_game = [];
@@ -104,6 +118,7 @@ class _MyGameState extends State<MyHomePage> {
       if (win) {
         print("Win");
         maxPlayCount++;
+        _confettiController.play();
       } else {
         print("Loose");
       }
@@ -286,6 +301,13 @@ class _MyGameState extends State<MyHomePage> {
                   const Padding(padding: EdgeInsets.only(bottom: 10)),
                 ],
               ),
+            ),
+          ),
+          Align(
+            alignment: Alignment.center,
+            child: ConfettiWidget(
+              confettiController: _confettiController,
+              blastDirectionality: BlastDirectionality.explosive
             ),
           ),
         ],

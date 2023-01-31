@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -15,6 +14,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flimon App',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
@@ -44,7 +44,6 @@ class MyHomePage extends StatefulWidget {
 class _MyGameState extends State<MyHomePage> {
   List<int> colors_game = [];
   List<int> colors_user = [];
-  int playCount = 0;
   int maxPlayCount = 4;
   int greenShade = 500;
   int redShade = 500;
@@ -55,61 +54,65 @@ class _MyGameState extends State<MyHomePage> {
     color: Colors.white,
   );
 
-  void _start() {
-    setState(() {
-      if (playCount == maxPlayCount) {
-        playCount = 0;
-        maxPlayCount++;
+  Future<void> _startGame() async {
+      colors_game = [];
+      colors_user = [];
+      for(int i = 0; i < maxPlayCount; i++){
         greenShade = 500;
         blueShade = 500;
         redShade = 500;
         yellowShade = 500;
-      } else {
+        await Future.delayed(const Duration(milliseconds: 50));
+        setState(() {});
         int random = Random().nextInt(4);
         colors_game.add(random);
         switch (random) {
           case 0:
             greenShade = 900;
-            blueShade = 500;
-            redShade = 500;
-            yellowShade = 500;
             break;
           case 1:
-            greenShade = 500;
             blueShade = 900;
-            redShade = 500;
-            yellowShade = 500;
             break;
           case 2:
-            greenShade = 500;
-            blueShade = 500;
             redShade = 900;
-            yellowShade = 500;
             break;
           case 3:
-            greenShade = 500;
-            blueShade = 500;
-            redShade = 500;
-            yellowShade = 900;
+            yellowShade = 800;
             break;
         }
-        //sleep(const Duration(seconds: 1));
-        playCount++;
-        //_start();
+        print("0green 1blue 2red 3yellow $colors_game $maxPlayCount");
+        await Future.delayed(const Duration(seconds: 1));
+        setState(() {});
       }
-      print("0green 1blue 2red 3yellow $colors_game $playCount $maxPlayCount");
-    });
+      setState(() {
+        greenShade = 500;
+        blueShade = 500;
+        redShade = 500;
+        yellowShade = 500;
+      });
   }
 
   void _checkWin() {
+    bool win = true;
     if (colors_user.length == colors_game.length) {
       for (int i = 0; i < colors_user.length; i++) {
         if (colors_user[i] != colors_game[i]) {
-          print("wrong");
+          win = false;
           break;
         }
       }
-      print("right");
+      if (win) {
+        print("Win");
+        maxPlayCount++;
+      } else {
+        print("Loose");
+      }
+      setState(() {
+        greenShade = 500;
+        blueShade = 500;
+        redShade = 500;
+        yellowShade = 500;
+      });
     }
   }
 
@@ -154,7 +157,7 @@ class _MyGameState extends State<MyHomePage> {
       greenShade = 500;
       blueShade = 500;
       redShade = 500;
-      yellowShade = 900;
+      yellowShade = 800;
       colors_user.add(3);
       _checkWin();
       print("yellowPush");
@@ -170,127 +173,127 @@ class _MyGameState extends State<MyHomePage> {
       body: GridView.count(
         crossAxisCount: 2,
         children: [
-              GestureDetector(
-                  onTap: () {
-                    _redPush();
-                  },
-                  child: Container(
-                    width: MediaQuery.of(context).size.width * 0.7,
-                    decoration: BoxDecoration(
-                        color: Colors.red[redShade],
-                        borderRadius: BorderRadius.circular(6),
-                        boxShadow: const [
-                          BoxShadow(
-                              color: Colors.black,
-                              blurRadius: 20.0,
-                              spreadRadius: .0,
-                              offset: Offset(0, 15))
-                        ]),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: <Widget>[
-                        const Padding(padding: EdgeInsets.only(top: 10)),
-                        Text(
-                          'Red button',
-                          style: _textStyleDefault,
-                        ),
-                        const Padding(padding: EdgeInsets.only(bottom: 10)),
-                      ],
+          GestureDetector(
+              onTap: () {
+                _redPush();
+              },
+              child: Container(
+                width: MediaQuery.of(context).size.width * 0.7,
+                decoration: BoxDecoration(
+                    color: Colors.red[redShade],
+                    borderRadius: BorderRadius.circular(6),
+                    boxShadow: const [
+                      BoxShadow(
+                          color: Colors.black,
+                          blurRadius: 20.0,
+                          spreadRadius: .0,
+                          offset: Offset(0, 15))
+                    ]),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: <Widget>[
+                    const Padding(padding: EdgeInsets.only(top: 10)),
+                    Text(
+                      'Red button',
+                      style: _textStyleDefault,
                     ),
-                  )),
-              GestureDetector(
-                onTap: () {
-                  _bluePush();
-                },
-                child: Container(
-                  width: MediaQuery.of(context).size.width * 0.7,
-                  decoration: BoxDecoration(
-                      color: Colors.blue[blueShade],
-                      borderRadius: BorderRadius.circular(6),
-                      boxShadow: const [
-                        BoxShadow(
-                            color: Colors.black,
-                            blurRadius: 20.0,
-                            spreadRadius: .0,
-                            offset: Offset(0, 15))
-                      ]),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: <Widget>[
-                      const Padding(padding: EdgeInsets.only(top: 10)),
-                      Text(
-                        'Blue button',
-                        style: _textStyleDefault,
-                      ),
-                      const Padding(padding: EdgeInsets.only(bottom: 10)),
-                    ],
-                  ),
+                    const Padding(padding: EdgeInsets.only(bottom: 10)),
+                  ],
                 ),
-              ),
-              GestureDetector(
-                onTap: () {
-                  _greenPush();
-                },
-                child: Container(
-                  width: MediaQuery.of(context).size.width * 0.7,
-                  decoration: BoxDecoration(
-                      color: Colors.green[greenShade],
-                      borderRadius: BorderRadius.circular(6),
-                      boxShadow: const [
-                        BoxShadow(
-                            color: Colors.black,
-                            blurRadius: 20.0,
-                            spreadRadius: .0,
-                            offset: Offset(0, 15))
-                      ]),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: <Widget>[
-                      const Padding(padding: EdgeInsets.only(top: 10)),
-                      Text(
-                        'Green button',
-                        style: _textStyleDefault,
-                      ),
-                      const Padding(padding: EdgeInsets.only(bottom: 10)),
-                    ],
+              )),
+          GestureDetector(
+            onTap: () {
+              _bluePush();
+            },
+            child: Container(
+              width: MediaQuery.of(context).size.width * 0.7,
+              decoration: BoxDecoration(
+                  color: Colors.blue[blueShade],
+                  borderRadius: BorderRadius.circular(6),
+                  boxShadow: const [
+                    BoxShadow(
+                        color: Colors.black,
+                        blurRadius: 20.0,
+                        spreadRadius: .0,
+                        offset: Offset(0, 15))
+                  ]),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: <Widget>[
+                  const Padding(padding: EdgeInsets.only(top: 10)),
+                  Text(
+                    'Blue button',
+                    style: _textStyleDefault,
                   ),
-                ),
+                  const Padding(padding: EdgeInsets.only(bottom: 10)),
+                ],
               ),
-              GestureDetector(
-                onTap: () {
-                  _yellowPush();
-                },
-                child: Container(
-                  width: MediaQuery.of(context).size.width * 0.7,
-                  decoration: BoxDecoration(
-                      color: Colors.yellow[yellowShade],
-                      borderRadius: BorderRadius.circular(6),
-                      boxShadow: const [
-                        BoxShadow(
-                            color: Colors.black,
-                            blurRadius: 20.0,
-                            spreadRadius: .0,
-                            offset: Offset(0, 15))
-                      ]),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: <Widget>[
-                      const Padding(padding: EdgeInsets.only(top: 10)),
-                      Text(
-                        'Yellow button',
-                        style: _textStyleDefault,
-                      ),
-                      const Padding(padding: EdgeInsets.only(bottom: 10)),
-                    ],
+            ),
+          ),
+          GestureDetector(
+            onTap: () {
+              _greenPush();
+            },
+            child: Container(
+              width: MediaQuery.of(context).size.width * 0.7,
+              decoration: BoxDecoration(
+                  color: Colors.green[greenShade],
+                  borderRadius: BorderRadius.circular(6),
+                  boxShadow: const [
+                    BoxShadow(
+                        color: Colors.black,
+                        blurRadius: 20.0,
+                        spreadRadius: .0,
+                        offset: Offset(0, 15))
+                  ]),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: <Widget>[
+                  const Padding(padding: EdgeInsets.only(top: 10)),
+                  Text(
+                    'Green button',
+                    style: _textStyleDefault,
                   ),
-                ),
+                  const Padding(padding: EdgeInsets.only(bottom: 10)),
+                ],
               ),
+            ),
+          ),
+          GestureDetector(
+            onTap: () {
+              _yellowPush();
+            },
+            child: Container(
+              width: MediaQuery.of(context).size.width * 0.7,
+              decoration: BoxDecoration(
+                  color: Colors.yellow[yellowShade],
+                  borderRadius: BorderRadius.circular(6),
+                  boxShadow: const [
+                    BoxShadow(
+                        color: Colors.black,
+                        blurRadius: 20.0,
+                        spreadRadius: .0,
+                        offset: Offset(0, 15))
+                  ]),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: <Widget>[
+                  const Padding(padding: EdgeInsets.only(top: 10)),
+                  Text(
+                    'Yellow button',
+                    style: _textStyleDefault,
+                  ),
+                  const Padding(padding: EdgeInsets.only(bottom: 10)),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _start,
+        onPressed: _startGame,
         tooltip: 'Start game',
-        child: const Icon(Icons.restart_alt),
+        child: const Icon(Icons.play_arrow),
       ),
     );
   }

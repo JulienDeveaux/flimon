@@ -123,16 +123,20 @@ class _MyGameState extends State<MyHomePage> {
       }
       if (win) {
         print("Win");
-        maxPlayCount++;
-        _confettiController.play();
-      } else {
-        print("Loose");
-      }
-      setState(() {
         greenShade = 500;
         blueShade = 500;
         redShade = 500;
         yellowShade = 500;
+        maxPlayCount++;
+        _confettiController.play();
+      } else {
+        greenShade = 900;
+        blueShade = 900;
+        redShade = 900;
+        yellowShade = 800;
+        print("Loose");
+      }
+      setState(() {
       });
     }
   }
@@ -198,7 +202,9 @@ class _MyGameState extends State<MyHomePage> {
                 width: MediaQuery.of(context).size.width * 0.7,
                 decoration: BoxDecoration(
                     color: Colors.red[redShade],
-                    borderRadius: BorderRadius.circular(6),
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(200),
+                    ),
                     boxShadow: const [
                       BoxShadow(
                           color: Colors.black,
@@ -226,7 +232,9 @@ class _MyGameState extends State<MyHomePage> {
               width: MediaQuery.of(context).size.width * 0.7,
               decoration: BoxDecoration(
                   color: Colors.blue[blueShade],
-                  borderRadius: BorderRadius.circular(6),
+                  borderRadius: const BorderRadius.only(
+                    topRight: Radius.circular(200),
+                  ),
                   boxShadow: const [
                     BoxShadow(
                         color: Colors.black,
@@ -255,7 +263,9 @@ class _MyGameState extends State<MyHomePage> {
               width: MediaQuery.of(context).size.width * 0.7,
               decoration: BoxDecoration(
                   color: Colors.green[greenShade],
-                  borderRadius: BorderRadius.circular(6),
+                  borderRadius: const BorderRadius.only(
+                    bottomLeft: Radius.circular(200),
+                  ),
                   boxShadow: const [
                     BoxShadow(
                         color: Colors.black,
@@ -284,7 +294,9 @@ class _MyGameState extends State<MyHomePage> {
               width: MediaQuery.of(context).size.width * 0.7,
               decoration: BoxDecoration(
                   color: Colors.yellow[yellowShade],
-                  borderRadius: BorderRadius.circular(6),
+                  borderRadius: const BorderRadius.only(
+                    bottomRight: Radius.circular(200),
+                  ),
                   boxShadow: const [
                     BoxShadow(
                         color: Colors.black,

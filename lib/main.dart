@@ -2,6 +2,8 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:confetti/confetti.dart';
+import 'package:flutter/services.dart';
+import 'package:soundpool/soundpool.dart';
 
 void main() {
   runApp(const MyApp());
@@ -10,7 +12,6 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -27,15 +28,6 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
   final String title;
 
   @override
@@ -44,6 +36,8 @@ class MyHomePage extends StatefulWidget {
 
 class _MyGameState extends State<MyHomePage> {
   late ConfettiController _confettiController;
+  Soundpool pool = Soundpool(streamType: StreamType.notification);
+  int soundId = -1;
   List<int> colors_game = [];
   List<int> colors_user = [];
   int maxPlayCount = 4;
@@ -69,6 +63,11 @@ class _MyGameState extends State<MyHomePage> {
   }
 
   Future<void> _startGame() async {
+      if(soundId == -1) {
+        soundId = await rootBundle.load("assets/buzz.mp3").then((ByteData soundData) {
+          return pool.load(soundData);
+        });
+      }
       colors_game = [];
       colors_user = [];
       for(int i = 0; i < maxPlayCount; i++){
@@ -95,6 +94,7 @@ class _MyGameState extends State<MyHomePage> {
             break;
         }
         print("0green 1blue 2red 3yellow $colors_game $maxPlayCount");
+        await pool.play(soundId);
         await Future.delayed(const Duration(seconds: 1));
         setState(() {});
       }
@@ -106,7 +106,13 @@ class _MyGameState extends State<MyHomePage> {
       });
   }
 
-  void _checkWin() {
+  Future<void> _checkWin() async {
+    if(soundId == -1) {
+      soundId = await rootBundle.load("assets/buzz.mp3").then((ByteData soundData) {
+        return pool.load(soundData);
+      });
+    }
+    await pool.play(soundId);
     bool win = true;
     if (colors_user.length == colors_game.length) {
       for (int i = 0; i < colors_user.length; i++) {
@@ -139,7 +145,6 @@ class _MyGameState extends State<MyHomePage> {
       yellowShade = 500;
       colors_user.add(2);
       _checkWin();
-      print("redPush");
     });
   }
 
@@ -151,7 +156,6 @@ class _MyGameState extends State<MyHomePage> {
       yellowShade = 500;
       colors_user.add(1);
       _checkWin();
-      print("bluePush");
     });
   }
 
@@ -163,7 +167,6 @@ class _MyGameState extends State<MyHomePage> {
       yellowShade = 500;
       colors_user.add(0);
       _checkWin();
-      print("greenPush");
     });
   }
 
@@ -175,7 +178,6 @@ class _MyGameState extends State<MyHomePage> {
       yellowShade = 800;
       colors_user.add(3);
       _checkWin();
-      print("yellowPush");
     });
   }
 
@@ -307,7 +309,8 @@ class _MyGameState extends State<MyHomePage> {
             alignment: Alignment.center,
             child: ConfettiWidget(
               confettiController: _confettiController,
-              blastDirectionality: BlastDirectionality.explosive
+              blastDirectionality: BlastDirectionality.explosive,
+              shouldLoop: false
             ),
           ),
         ],

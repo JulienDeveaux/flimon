@@ -53,7 +53,7 @@ class _MyGameState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    _confettiController = ConfettiController(duration: const Duration(seconds: 1));
+    _confettiController = ConfettiController(duration: const Duration(milliseconds: 500));
   }
 
   @override
@@ -310,7 +310,11 @@ class _MyGameState extends State<MyHomePage> {
             child: ConfettiWidget(
               confettiController: _confettiController,
               blastDirectionality: BlastDirectionality.explosive,
-              shouldLoop: false
+              shouldLoop: false,
+              emissionFrequency: 0.001,
+              maxBlastForce: 10,
+              gravity: 0.3,
+              numberOfParticles: 5,
             ),
           ),
         ],
